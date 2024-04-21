@@ -89,6 +89,17 @@ void taskFxn(UArg a0, UArg a1) {
 
         uint8_t bvWindowState = scifTaskData.adcWindowMonitor.output.bvWindowState;
 
+        // Indicate on LEDs whether the current ADC value is high and/or low
+        if (scifTaskData.adcWindowMonitor.output.bvWindowState & SCIF_ADC_WINDOW_MONITOR_BV_ADC_WINDOW_LOW) {
+            GPIO_write(CONFIG_GPIO_GLED, 1);
+        } else {
+            GPIO_write(CONFIG_GPIO_GLED, 0);
+        }
+        if (scifTaskData.adcWindowMonitor.output.bvWindowState & SCIF_ADC_WINDOW_MONITOR_BV_ADC_WINDOW_HIGH) {
+            GPIO_write(CONFIG_GPIO_RLED, 1);
+        } else {
+            GPIO_write(CONFIG_GPIO_RLED, 0);
+        }
 
         // Acknowledge the alert event
         scifAckAlertEvents();
