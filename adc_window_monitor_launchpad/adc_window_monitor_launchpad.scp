@@ -1,0 +1,172 @@
+<?xml version="1.0"?>
+<project name="ADC Window Monitor for LaunchPad" version="2.0.0.0">
+    <desc><![CDATA[Demonstrates ADC value monitoring, where the Sensor Controller only notifies the System CPU application when the ADC value monitoring state changes.
+
+The monitoring state indicates whether the ADC value is below, inside or above a configurable window:
+- If below the configurable low threshold, the application indicates this on LaunchPad Green LED
+- If above the configurable high threshold, the application indicates this on LaunchPad Red LED
+
+The ADC input is by default DIO23 on the LaunchPad. This signal can easily be strapped to GND or 3V3 with a jumper to verify that the ADC is operational.
+
+See the header in the application source file ("main.c" or similar) for further details and instructions. This file is located in the source code output directory.]]></desc>
+    <pattr name="Apply default power mode">0</pattr>
+    <pattr name="Board">CC1312R7 LaunchPad</pattr>
+    <pattr name="Chip name">CC1312R7</pattr>
+    <pattr name="Chip package">QFN48 7x7 RGZ</pattr>
+    <pattr name="Chip revision">B</pattr>
+    <pattr name="Clock in active mode">0</pattr>
+    <pattr name="Code prefix"></pattr>
+    <pattr name="Default power mode">0</pattr>
+    <pattr name="Operating system">TI-RTOS</pattr>
+    <pattr name="Output directory">./source</pattr>
+    <pattr name="RTC tick interval (16.16 format)">1000</pattr>
+    <pattr name="Run-time logging UART RX pin"></pattr>
+    <pattr name="Run-time logging UART TX pin"></pattr>
+    <task name="ADC Window Monitor">
+        <desc><![CDATA[The Sensor Controller samples a single ADC channel and monitor and maintains a bit-vector that indicates whether the ADC value is:
+- Below a configurable low threshold
+- Above a configurable high threshold
+
+The System CPU application is notified when the bit-vector (the monitoring state) changes.]]></desc>
+        <tattr name="BV_ADC_WINDOW_HIGH" desc="Bit vector: ADC value is above cfg.adcWindowHigh" type="hex" content="const" scope="task" min="0000" max="ffff">0002</tattr>
+        <tattr name="BV_ADC_WINDOW_LOW" desc="Bit vector: ADC value is above cfg.adcWindowLow" type="hex" content="const" scope="task" min="0000" max="ffff">0001</tattr>
+        <tattr name="cfg.adcWindowHigh" desc="Window high ADC value" type="dec" content="struct" scope="task" min="0" max="65535">0</tattr>
+        <tattr name="cfg.adcWindowLow" desc="Window low voltage" type="dec" content="struct" scope="task" min="0" max="65535">0</tattr>
+        <tattr name="output.adcValue" desc="Last ADC value" type="dec" content="struct" scope="task" min="0" max="65535">0</tattr>
+        <tattr name="output.bvWindowState" desc="Bit 0 indicates low, bit 1 indicates high" type="hex" content="struct" scope="task" min="0000" max="ffff">0000</tattr>
+        <resource_ref name="ADC" enabled="1"/>
+        <resource_ref name="AON Domain Functionality" enabled="0"/>
+        <resource_ref name="Accumulator-Based Math" enabled="0"/>
+        <resource_ref name="Analog Open-Drain Pins" enabled="0"/>
+        <resource_ref name="Analog Open-Source Pins" enabled="0"/>
+        <resource_ref name="Analog Pins" enabled="1">
+            <io_usage name="SENSOR_OUTPUT" label="Sensor output">
+                <uattr name="Pin count">0</uattr>
+                <uattr name="Pin/0000">DIO23</uattr>
+                <uattr name="Pin/0001"></uattr>
+                <uattr name="Pin/0002"></uattr>
+                <uattr name="Pin/0003"></uattr>
+                <uattr name="Pin/0004"></uattr>
+                <uattr name="Pin/0005"></uattr>
+                <uattr name="Pin/0006"></uattr>
+                <uattr name="Pin/0007"></uattr>
+            </io_usage>
+        </resource_ref>
+        <resource_ref name="COMPA" enabled="0"/>
+        <resource_ref name="COMPA Event Trigger" enabled="0"/>
+        <resource_ref name="COMPB" enabled="0"/>
+        <resource_ref name="COMPB Event Trigger" enabled="0"/>
+        <resource_ref name="Delay Insertion" enabled="0"/>
+        <resource_ref name="Differential Output Pins" enabled="0"/>
+        <resource_ref name="Digital Input Pins" enabled="0"/>
+        <resource_ref name="Digital Open-Drain Pins" enabled="0"/>
+        <resource_ref name="Digital Open-Source Pins" enabled="0"/>
+        <resource_ref name="Digital Output Pins" enabled="0"/>
+        <resource_ref name="Dynamic Power Control" enabled="0"/>
+        <resource_ref name="GPIO Event Trigger" enabled="0"/>
+        <resource_ref name="I2C Master" enabled="0">
+            <rattr name="SCL frequency">0</rattr>
+            <rattr name="SCL stretch timeout">1</rattr>
+            <io_usage>
+                <uattr name="SCL pin/0000"></uattr>
+                <uattr name="SDA pin/0000"></uattr>
+            </io_usage>
+        </resource_ref>
+        <resource_ref name="ISRC" enabled="0"/>
+        <resource_ref name="Math and Logic" enabled="0"/>
+        <resource_ref name="Multi-Buffered Output Data Exchange" enabled="0">
+            <rattr name="Buffer count">2</rattr>
+            <rattr name="Indicate overflow at buffer check">1</rattr>
+            <rattr name="Indicate overflow at buffer switch">0</rattr>
+            <rattr name="Prevent overflow at buffer switch">1</rattr>
+        </resource_ref>
+        <resource_ref name="Peripheral Sharing" enabled="0"/>
+        <resource_ref name="Pulse Counter" enabled="0"/>
+        <resource_ref name="RTC Multi-Event Capture" enabled="0"/>
+        <resource_ref name="RTC-Based Execution Scheduling" enabled="1"/>
+        <resource_ref name="Reference DAC" enabled="0"/>
+        <resource_ref name="Run-Time Logging" enabled="1"/>
+        <resource_ref name="SPI Chip Select" enabled="0"/>
+        <resource_ref name="SPI Data Transfer" enabled="0">
+            <rattr name="Bit rate">0</rattr>
+            <rattr name="MISO configuration when inactive">-1</rattr>
+            <rattr name="MOSI configuration on initialization">0</rattr>
+            <rattr name="MOSI configuration on uninitialization">0</rattr>
+            <rattr name="SCLK configuration on initialization">0</rattr>
+            <rattr name="SCLK configuration on uninitialization">0</rattr>
+            <io_usage>
+                <uattr name="MISO pin/0000"></uattr>
+                <uattr name="MOSI pin/0000"></uattr>
+                <uattr name="SCLK pin/0000"></uattr>
+            </io_usage>
+        </resource_ref>
+        <resource_ref name="Signal Observation" enabled="0"/>
+        <resource_ref name="System CPU Alert" enabled="1"/>
+        <resource_ref name="System Event Trigger" enabled="0"/>
+        <resource_ref name="TDC" enabled="0"/>
+        <resource_ref name="Timer 0" enabled="0"/>
+        <resource_ref name="Timer 0 Event Trigger" enabled="0"/>
+        <resource_ref name="Timer 1" enabled="0"/>
+        <resource_ref name="Timer 1 Event Trigger" enabled="0"/>
+        <resource_ref name="Timer 2" enabled="0"/>
+        <resource_ref name="Timer 2 Event Trigger" enabled="0"/>
+        <resource_ref name="UART Emulator" enabled="0">
+            <rattr name="RX buffer size">64</rattr>
+            <rattr name="Required idle period before enabling RX">11</rattr>
+            <rattr name="TX buffer size">64</rattr>
+            <io_usage>
+                <uattr name="RX pin/0000"></uattr>
+                <uattr name="TX pin/0000"></uattr>
+            </io_usage>
+        </resource_ref>
+        <sccode name="event0" init_power_mode="0"><![CDATA[]]></sccode>
+        <sccode name="event1" init_power_mode="0"><![CDATA[]]></sccode>
+        <sccode name="event2" init_power_mode="0"><![CDATA[]]></sccode>
+        <sccode name="event3" init_power_mode="0"><![CDATA[]]></sccode>
+        <sccode name="execute" init_power_mode="0"><![CDATA[// Enable the ADC
+adcEnableSync(ADC_REF_FIXED, ADC_SAMPLE_TIME_2P7_US, ADC_TRIGGER_MANUAL);
+
+// Sample the sensor
+U16 adcValue;
+adcGenManualTrigger();
+adcReadFifo(adcValue);
+output.adcValue = adcValue;
+
+// Disable the ADC
+adcDisable();
+
+// Determine if the ADC value is below the low threshold or above the high threshold
+U16 bvWindowState = 0x0000;
+if (adcValue < cfg.adcWindowLow) {
+    bvWindowState |= BV_ADC_WINDOW_LOW;
+}
+if (adcValue > cfg.adcWindowHigh) {
+    bvWindowState |= BV_ADC_WINDOW_HIGH;
+}
+
+// Alert the driver when the window state changes
+if (bvWindowState != output.bvWindowState) {
+    output.bvWindowState = bvWindowState;
+    fwGenAlertInterrupt();
+}
+
+// Schedule the next execution
+fwScheduleTask(1);
+
+// Run-time logging: Log the output data structure
+rtlLogStructs(BV_RTL_LOG_OUTPUT);]]></sccode>
+        <sccode name="initialize" init_power_mode="0"><![CDATA[// Select ADC input
+adcSelectGpioInput(AUXIO_A_SENSOR_OUTPUT);
+
+// Schedule the first execution
+fwScheduleTask(1);]]></sccode>
+        <sccode name="terminate" init_power_mode="0"><![CDATA[]]></sccode>
+        <event_trigger active_count="1">0,1,2,3</event_trigger>
+        <tt_iter>run_execute</tt_iter>
+        <tt_struct>output.adcValue,output.bvWindowState</tt_struct>
+        <rtl_struct>output.adcValue,output.bvWindowState</rtl_struct>
+        <rtl_task_sel en="1" struct_log_list="output"/>
+        <rtl_cfg_slider name="High threshold" struct_member="cfg.adcWindowHigh" min="0" max="800" value="560"><![CDATA[value = slider;]]></rtl_cfg_slider>
+        <rtl_cfg_slider name="Low threshold" struct_member="cfg.adcWindowLow" min="0" max="800" value="460"><![CDATA[value = slider;]]></rtl_cfg_slider>
+    </task>
+</project>
