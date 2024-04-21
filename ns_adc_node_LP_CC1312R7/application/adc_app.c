@@ -15,6 +15,7 @@
 //
 //****************************************************************************/
 #include "ex_include_tirtos.h"
+#include "adc_app.h"
 #include "scif.h"
 
 #ifdef WISUN_NCP_ENABLE
@@ -74,8 +75,8 @@ void taskFxn(UArg a0, UArg a1) {
     scifStartRtcTicksNow(0x00010000 / 8);
 
     // Configure and start the Sensor Controller's ADC window monitor task (not to be confused with OS tasks)
-    scifTaskData.adcWindowMonitor.cfg.adcWindowHigh = 800;
-    scifTaskData.adcWindowMonitor.cfg.adcWindowLow  = 400;
+    scifTaskData.adcWindowMonitor.cfg.adcWindowHigh = get_adc_corrected_value(800);
+    scifTaskData.adcWindowMonitor.cfg.adcWindowLow  = get_adc_corrected_value(400);
     scifStartTasksNbl(BV(SCIF_ADC_WINDOW_MONITOR_TASK_ID));
 
     // Main loop
@@ -96,6 +97,20 @@ void taskFxn(UArg a0, UArg a1) {
 } // taskFxn
 
 
+/** \brief ADC raw data correction
+  *
+  * This function corrects the ADC gain error and ADC offset.
+  */
+uint16_t get_adc_corrected_value(uint16_t adcValue) {
+    int32_t adcOffset = AUXADCGetAdjustmentOffset(AUXADC_REF_FIXED);
+    int32_t adcGainError = AUXADCGetAdjustmentGain(AUXADC_REF_FIXED);
+    int32_t adcCorrectedValue;
+
+    // ADC raw data correction
+    adcCorrectedValue = AUXADCAdjustValueForGainAndOffset((int32_t) adcValue, adcGainError, adcOffset);
+
+    return (uint16_t)adcCorrectedValue;
+} // get_adc_corrected_value
 
 
 void init_adc_tasks(void){

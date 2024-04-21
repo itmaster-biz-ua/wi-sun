@@ -834,11 +834,13 @@ static int coap_recv_cb_adc_window(int8_t service_id, uint8_t source_address[sta
             // Set ADC Window ranges from the payload: [MSB, LSB]
             if (request_ptr->payload_ptr[0] == COAP_ADC_WINDOW_LOW_ID)
             {
-                scifTaskData.adcWindowMonitor.cfg.adcWindowLow = ((uint16_t)request_ptr->payload_ptr[1] << 8) + request_ptr->payload_ptr[2];
+                uint16_t adcWindowLow = ((uint16_t)request_ptr->payload_ptr[1] << 8) + request_ptr->payload_ptr[2];
+                scifTaskData.adcWindowMonitor.cfg.adcWindowLow = get_adc_corrected_value(adcWindowLow);
             }
             else if (request_ptr->payload_ptr[0] == COAP_ADC_WINDOW_HIGH_ID)
             {
-                scifTaskData.adcWindowMonitor.cfg.adcWindowHigh =  ((uint16_t)request_ptr->payload_ptr[1] << 8) + request_ptr->payload_ptr[2];
+                uint16_t adcWindowHigh = ((uint16_t)request_ptr->payload_ptr[1] << 8) + request_ptr->payload_ptr[2];
+                scifTaskData.adcWindowMonitor.cfg.adcWindowHigh = get_adc_corrected_value(adcWindowHigh);
             }
             else
             {
@@ -873,10 +875,11 @@ static int coap_recv_cb_adc_voltage(int8_t service_id, uint8_t source_address[st
 
     if (request_ptr->msg_code == COAP_MSG_CODE_REQUEST_GET)
     {
+        uint16_t adcCorrectedValue = get_adc_corrected_value(scifTaskData.adcWindowMonitor.output.adcValue);
         // Send bvWindowState in CoAP response payload
         uint8_t adc_volatge[2];
-        adc_volatge[1] = (uint8_t)scifTaskData.adcWindowMonitor.output.adcValue & 0x00FF;
-        adc_volatge[0] = (uint8_t)((scifTaskData.adcWindowMonitor.output.adcValue & 0xFF00) >> 8);
+        adc_volatge[1] = (uint8_t)adcCorrectedValue & 0x00FF;
+        adc_volatge[0] = (uint8_t)((adcCorrectedValue & 0xFF00) >> 8);
 
         coap_service_response_send(service_id, 0, request_ptr, COAP_MSG_CODE_RESPONSE_CONTENT,
                                    COAP_CT_TEXT_PLAIN, adc_volatge, sizeof(adc_volatge));
