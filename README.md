@@ -1,2 +1,2 @@
 # wi-sun
-The ADC Window Monitor COAP node
+The Wi-SUN FAN network projects
